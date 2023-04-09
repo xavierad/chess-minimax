@@ -1,7 +1,7 @@
 #%%
 from chess import Move
 from board.board_wrapper import BoardWrapper
-from minimax import find_best_move 
+from minmax import find_best_move 
 
 state: BoardWrapper = BoardWrapper()
 move: Move
