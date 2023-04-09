@@ -15,7 +15,6 @@ def minimax_alpha_beta(maximize: bool, depth: int, state: BoardWrapper, alpha: i
     
     score: int = -10000 if maximize else 10000
     sub_score: int
-    scores: List[int] = []
     for move in state.get_possible_moves():
         state.make_move(move)
         sub_score = minimax_alpha_beta(
