@@ -11,8 +11,9 @@ PIECE_SCORES: Dict[str, int] = {
     KING: 10
 }
 
-class BoardWrapper(Board):
-    board: Board = Board()
+class BoardWrapper:
+    def __init__(self) -> None:
+        self.board: Board = Board()
 
     def is_draw(self) -> bool:
         return self.board.is_insufficient_material() or self.board.is_stalemate()
@@ -31,10 +32,13 @@ class BoardWrapper(Board):
         piece_capture: PieceType = self.board.piece_type_at(capture_square)
         if piece_capture:
             return PIECE_SCORES[piece_capture] 
+        
         self.board.push(move)
         if self.board.is_checkmate():
             self.undo_move()
             return 1000
+        
+        self.undo_move()
         return 0
 
     def make_move(self, move: Move) -> None:
@@ -51,3 +55,6 @@ class BoardWrapper(Board):
 
     def evaluate(self, move: Move) -> int:
         return self._get_score(move)
+    
+    def __str__(self) -> str:
+        return str(self.board)
