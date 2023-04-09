@@ -7,20 +7,29 @@ from board.board_wrapper import BoardWrapper
 
 def minimax_alpha_beta(maximize: bool, depth: int, state: BoardWrapper, alpha: int=-10000, beta: int=10000) -> int:
     if depth == 0 or state.is_over():
-        last_move: Move = state.get_last_move()
         if maximize:
-            return state.evaluate(last_move)  
+            return -state.evaluate()  
         else:
-            return -state.evaluate(last_move) 
+            return state.evaluate() 
     
     score: int = -10000 if maximize else 10000
     sub_score: int
     for move in state.get_possible_moves():
         state.make_move(move)
+        if state.get_piece_captured() is not None:
+            if maximize:
+                score = -state.evaluate()  
+            else:
+                score = state.evaluate() 
+    
+            state.undo_move()
+            break
+
         sub_score = minimax_alpha_beta(
             maximize=(not maximize), 
             depth=depth-1, 
-            state=state, alpha=alpha, 
+            state=state, 
+            alpha=alpha, 
             beta=beta
         )
         if maximize: 
@@ -53,5 +62,6 @@ def find_best_move(maximize: bool, depth: int, state: BoardWrapper) -> Move:
         elif not maximize and score < bestScore:
             bestScore = score
             bestMove = move
-
+        print(score)
+    print(bestScore)
     return bestMove

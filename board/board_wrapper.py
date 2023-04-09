@@ -26,35 +26,35 @@ class BoardWrapper:
     
     def get_possible_moves(self) -> List[Move]:
         return self.board.legal_moves
-    
-    def _get_score(self, move: Move) -> int:
-        capture_square: Square = move.to_square
-        piece_capture: PieceType = self.board.piece_type_at(capture_square)
-        if piece_capture:
-            return PIECE_SCORES[piece_capture] 
-        
-        self.board.push(move)
-        if self.board.is_checkmate():
-            self.undo_move()
-            return 1000
-        
-        self.undo_move()
-        return 0
 
     def make_move(self, move: Move) -> None:
         if not self.board.is_legal(move):
-            raise IllegalMoveError(f"Illegal move: {move.uci()}!")
+            IllegalMoveError(f"Illegal move: {move.uci()}!")
         
         self.board.push(move)
 
-    def undo_move(self) -> None:
-        self.board.pop()
+    def undo_move(self) -> Move:
+        return self.board.pop()
     
     def get_last_move(self) -> Move:
         return self.board.peek()
 
-    def evaluate(self, move: Move) -> int:
-        return self._get_score(move)
+    def get_piece_captured(self) -> bool:
+        move: Move = self.undo_move()
+        capture_square: Square = move.to_square
+        piece_captured: PieceType = self.board.piece_type_at(capture_square)
+        self.make_move(move)
+        return piece_captured 
+
+    def evaluate(self) -> int:
+        piece_capture: PieceType = self.get_piece_captured()
+        if piece_capture:
+            return PIECE_SCORES[piece_capture] 
+        
+        if self.board.is_checkmate():
+            return 1000
+        
+        return 0
     
     def __str__(self) -> str:
         return str(self.board)

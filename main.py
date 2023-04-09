@@ -13,10 +13,10 @@ while not state.is_over():
     print(state)
 
     if ai_player:
-        move = find_best_move(maximize=False, depth=5, state=state) 
+        move = find_best_move(maximize=False, depth=2, state=state) 
     
     else: 
-        move_uci = str(input('Your move (from UCI notation): '))
+        move_uci = str(input('\nYour move (from UCI notation): '))
         move = Move.from_uci(move_uci)
     
     state.make_move(move)
