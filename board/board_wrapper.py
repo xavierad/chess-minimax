@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional
-from chess import Board, IllegalMoveError, Move, Piece, PieceType, Square, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
+from chess import Board, IllegalMoveError, Move, PieceType, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
+
 
 
 PIECE_SCORES: Dict[str, int] = {
@@ -27,6 +28,9 @@ class BoardWrapper:
     def get_possible_moves(self) -> List[Move]:
         return self.board.legal_moves
 
+    def get_possible_sorted_moves(self) -> List[Move]:
+        return self._sort_moves()
+
     def make_move(self, move: Move) -> None:
         if not self.board.is_legal(move):
             IllegalMoveError(f"Illegal move: {move.uci()}!")
@@ -39,22 +43,34 @@ class BoardWrapper:
     def get_last_move(self) -> Move:
         return self.board.peek()
 
-    def get_piece_captured(self) -> bool:
-        move: Move = self.undo_move()
-        capture_square: Square = move.to_square
-        piece_captured: PieceType = self.board.piece_type_at(capture_square)
-        self.make_move(move)
-        return piece_captured 
+    def _sort_moves(self) -> List[Move]:
+        moves: List[Move] = self.board.legal_moves
 
-    def evaluate(self) -> int:
-        piece_capture: PieceType = self.get_piece_captured()
-        if piece_capture:
-            return PIECE_SCORES[piece_capture] 
-        
-        if self.board.is_checkmate():
-            return 1000
-        
-        return 0
+        pieces: List[Optional[PieceType]] = [
+            self.board.piece_type_at(move.to_square) 
+            for move in moves
+        ]
+
+        moves = sorted(
+            zip(moves, pieces),
+            key=lambda x: -1 * float('inf') if x[1] is None else x[1],
+            reverse=True
+        )
+
+        return map(lambda x: x[0], moves)
+    
+    def evaluate_state(self, player: bool) -> int:
+        total_score: int = 0
+        self_score: int
+        opponent_score: int
+
+        for piece, score in PIECE_SCORES.items():
+            self_score = len(self.board.pieces(piece_type=piece, color=player)) * score
+            opponent_score = len(self.board.pieces(piece_type=piece, color=(not player))) * score * -1
+
+            total_score += (self_score + opponent_score)
+
+        return total_score
     
     def __str__(self) -> str:
         return str(self.board)
