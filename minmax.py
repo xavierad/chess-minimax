@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 # TODO: avoid using this, do a wrapper
 from chess import Move
@@ -29,25 +29,22 @@ def minimax_alpha_beta(maximize: bool, depth: int, state: BoardWrapper, alpha: i
 
         state.undo_move()
 
-        if beta <= alpha:
+        if (maximize and score >= beta) or (not maximize and score <= alpha):
             break
 
     return score
 
-def find_best_move(maximize: bool, depth: int, state: BoardWrapper) -> Move:
-    bestScore: int = -100000 if maximize else 100000
+def find_best_move(state: BoardWrapper, depth: int,) -> Move:
+    bestScore: int = 100000
     bestMove: Optional[Move] = None
     score: int = 0
 
     for move in state.get_possible_moves():
         state.make_move(move)
-        score = minimax_alpha_beta(maximize=maximize, depth=depth, state=state)
+        score = minimax_alpha_beta(maximize=True, depth=depth, state=state)
         state.undo_move()
         
-        if maximize and score > bestScore:
-            bestScore = score
-            bestMove = move
-        elif not maximize and score < bestScore:
+        if bestScore > score:
             bestScore = score
             bestMove = move
         print(score, move)
