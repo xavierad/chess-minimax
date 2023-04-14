@@ -10,9 +10,11 @@ state: BoardWrapper = BoardWrapper('3r4/pR2N3/2pkb3/5p2/8/2B5/qP3PPP/4R1K1 w - -
 move: Move
 move_uci: str
 
+print(state)
+
 #%%
 while not state.is_over():
-    print(state)
+    
 
     if ai_player:
         move = find_best_move(state=state, depth=4) 
@@ -20,10 +22,11 @@ while not state.is_over():
     else: 
         # move_uci = str(input('\nYour move (from UCI notation): '))
         # move = Move.from_uci(move_uci)
-        move = find_best_move(state=state, depth=4) 
+        move = find_best_move(state=state, depth=2) 
     
     state.make_move(move)
     print(move.uci())
     
     ai_player = not ai_player
+    print(state)
         
