@@ -1,1 +1,6 @@
-chess=1.9.4
+chess==1.9.4
+mypy==1.2.0
+pre-commit==3.2.2
+pytest==7.3.0
+pytest-xdist==3.2.1
+python-dotenv==1.0.0
