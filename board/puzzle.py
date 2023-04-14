@@ -2,7 +2,7 @@ from typing import List
 
 from chess import Move
 from board.board_wrapper import BoardWrapper
-from minmax import find_best_move
+from minimax import find_best_move
 
 
 class Puzzle:
@@ -19,7 +19,7 @@ class Puzzle:
 
         print(self.board)
 
-        while not self.board.is_over() or len(moves) < (self.moves_to_mate * 2):
+        while not self.board.is_over() and  (len(moves) < (self.moves_to_mate * 2)):
 
             # no needed to check who is playing, the computer will player against itself
             move = find_best_move(state=self.board, depth=self.depth) 

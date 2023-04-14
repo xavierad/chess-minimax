@@ -13,5 +13,5 @@ from board.puzzle import Puzzle
     ]  
 )
 def test_puzzles(fen: str, white_to_play: bool, moves_to_mate: int, depth: int, solution: List[str]) -> None:
-    board: Puzzle = Puzzle(fen=fen, white_to_play=white_to_play, moves_to_mate=moves_to_mate, depth=depth)
-    assert board.solve() == solution
+    puzzle: Puzzle = Puzzle(fen=fen, white_to_play=white_to_play, moves_to_mate=moves_to_mate, depth=depth)
+    assert puzzle.solve() == solution
